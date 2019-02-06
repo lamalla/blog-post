@@ -9,10 +9,10 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateTimeField()
     author= models.ForeignKey(Owner, on_delete=models.CASCADE)
-    text= models.TextField(default=" ")
+    text= models.TextField(default="")
 
 class Comment(models.Model):
-    author= models.CharField(max_length=200)
-    text = models.CharField(max_length=200)
     date = models.DateTimeField()
+    author= models.CharField(max_length=200)
+    text =  models.TextField(default="")
     post=  models.ForeignKey(Post, on_delete=models.CASCADE)
