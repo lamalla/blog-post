@@ -6,14 +6,27 @@
 </head>
 
 <body>
+  <h1> My Blog</h1>
   {% block content %}
 <ul>  {% for post in blog_posts %}
-      {{ post.title}} <br/>
-      {{ post.author}}
-      {{ post.date }} <br/>
+      <h2>{{ post.title}}</h2> <br/>
+      by {{ post.author}} on {{ post.date }} <br/>
       {{ post.text }}  <br/>
-      {{ post.comments }} 
+      {{ post.comments }}
+      <button type="button" id= "new_comm" onclick="showForm()">Add Comment</button>
+      <script>
+        function showForm() {
+          document.getElementById("comm_form").style.visibility = "visible";
+          document.getElementById("new_comm").style.visibility = "hidden";
+        }
 
+      </script>
+      <form action="" method="post" style="visibility: hidden" id="comm_form">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input type="hidden" id="postId" name="postId" value= {{post.title}}>
+          <input type="submit" value="OK">
+      </form>
   {% endfor %}
 </ul>
 
