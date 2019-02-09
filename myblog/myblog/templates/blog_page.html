@@ -19,26 +19,37 @@
           <br/>
 
         {% endfor %}
-      <button type="button" id= "new_comm" onclick="showForm()">Add Comment</button>
+      <button type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
 
-      <form action=""  id={{post.id}}>
+      <form action="" style="visibility: hidden; display: none;" id={{post.id}}>
           {% csrf_token %}
           <!--{{form.as_p}}-->
          <p><label for="id_author">Author:</label> <input type="text" name="author" maxlength="200" required="" id="id_author_{{post.id}}" ></p>
           <p><label for="id_text">Text:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text_{{post.id}}"></textarea></p>
           <!--<input type="hidden" id="postId" name="postId" value= {{post.id}}>-->
           <input class="sub" type="button" value="OK" >
-          <button type="button" onclick="hideForm()">X</button>
+          <button type="button" onclick="hideForm({{post.id}})">X</button>
       </form>
 
 
 
     {% block javascript %}
     <script>
+
+    function showForm(id){
+      $("#new_comm_" + id ).attr('style','visibility: hidden; display: none;');
+      $("#" +id ).attr('style','visibility: visible; display: block;');
+    };
+    function hideForm(id){
+      $("#new_comm_" + id ).attr('style','visibility: visible; display: block;');
+      $("#" + id ).attr('style','visibility: hidden; display: none;');
+
+    };
+
     $('.sub').on('click', function(event){
       event.preventDefault();
-      console.log("form submitted!")  // sanity check
-      var post_Id= $(this).closest("form").attr('id')
+      console.log("submitted!")
+      var post_Id= $(this).closest("form").attr('id');
       var author = $("#id_author_" +  + post_Id).val();
       var text = $("#id_text_" + post_Id).val();
       console.log(post_Id)
@@ -49,28 +60,21 @@
 
 
     function add_comment(id, author, text) {
-    console.log("create post is working!") // sanity check
+    console.log("create post is working!")
     $.ajax({
-        url : "/blog/", // the endpoint
-        type : "POST", // http method
+        url : "/blog/",
+        type : "POST",
         data : { post_Id : id,
                 author : author,
                 text : text,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
-        }, // data sent with the post request
-
-        // handle a successful response
+        },
         success : function(json) {
-            //$('#post-text').val(''); // remove the value from the input
-            //console.log(json); // log the returned json to the console
-            console.log("success"); // another sanity check
+            console.log("success");
             location.reload()
         },
-
-        // handle a non-successful response
         error : function(xhr,errmsg,err) {
-            console.log(err)
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            console.log(err);
         }
     });
 };
