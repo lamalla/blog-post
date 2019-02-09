@@ -19,17 +19,21 @@ def index(request):
             text= request.POST['text']
             date = datetime.now()
             comment = Comment.objects.create(author=author, text=text, date= date)
+            print(comment)
 
 
             #comment.save()
-            postId= request.POST['id']
-            curr_post= Post.objects.filter(id= postId)
+            #postId= request.POST['id']
+            postId= request.POST.get('id', 2)
+            #print(postId)
+            curr_post= Post.objects.get(id= postId)
+            #print(curr_post)
             curr_post.comments.add(comment)
+            #print(curr_post.comments)
             curr_post.save()
-            post_comments= curr_post.comments.all()
             return redirect('/blog/')
     else:
         form= CommentForm()
     posts= Post.objects.all()
-    context={'blog_posts': posts, 'post_comments': post_comments, 'form': form}
+    context={'blog_posts': posts, 'form': form}
     return render(request, "blog_page.html", context)

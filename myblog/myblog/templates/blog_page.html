@@ -13,13 +13,14 @@
       <h2>{{ post.title}}</h2> <br/>
       by {{ post.author}} on {{ post.date }} <br/>
       {{ post.text }}  <br/>
-      {% for comment in post_comments %}
-      {{comment.text}}
-      {{comment.author}}
+        {% for comment in post.comments.all %}
+          {{comment.text}} <br/>
+          {{comment.author}}<br/>
+          <br/>
 
-      {% endfor %}
+        {% endfor %}
       <button type="button" id= "new_comm" onclick="showForm()">Add Comment</button>
-      <form action="" method="post"  id={{post.id}}>
+      <form action="" method="post" id={{post.id}}>
           {% csrf_token %}
           {{ form.as_p }}
           <!--<input type="hidden" id="postId" name="postId" value= {{post.title}}>-->
@@ -47,7 +48,6 @@
       success: function (data) {
           alert("you rock");
       }
-      alert(id);
     });
 
   });
