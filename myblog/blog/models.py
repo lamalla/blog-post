@@ -17,11 +17,12 @@ class Comment(models.Model):
         return self.text
 
 class Post(models.Model):
+    id= models.IntegerField(primary_key=True)
     title = models.CharField(max_length=200)
     date = models.DateTimeField()
     author= models.ForeignKey(Owner, on_delete=models.CASCADE)
     text= models.TextField(default="")
-    comments= models.ForeignKey(Comment, on_delete=models.CASCADE)
+    comments= models.ManyToManyField(Comment)
 
     def __str__(self):
         return self.title

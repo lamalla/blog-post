@@ -3,6 +3,7 @@
 
 <head>
   <title>My Blog</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -12,21 +13,65 @@
       <h2>{{ post.title}}</h2> <br/>
       by {{ post.author}} on {{ post.date }} <br/>
       {{ post.text }}  <br/>
-      {{ post.comments }}
+      {% for comment in post_comments %}
+      {{comment.text}}
+      {{comment.author}}
+
+      {% endfor %}
       <button type="button" id= "new_comm" onclick="showForm()">Add Comment</button>
-      <script>
+      <form action="" method="post"  id={{post.id}}>
+          {% csrf_token %}
+          {{ form.as_p }}
+          <!--<input type="hidden" id="postId" name="postId" value= {{post.title}}>-->
+          <input type="submit" value="OK" id= "sub">
+          <button type="button" onclick="hideForm()">X</button>
+      </form>
+
+
+      {% block javascript %}
+  <script>
+  $("#sub").click(function () {
+    var author = $("id_author").val();
+    var text = $("id_text").val();
+    var id= $(this).closest('form').attr('id');
+
+    $.ajax({
+      url: '/blog/',
+      type: "POST",
+      data: {
+        'author': author,
+        'text': text,
+        'id': id,
+      },
+      dataType: 'json',
+      success: function (data) {
+          alert("you rock");
+      }
+      alert(id);
+    });
+
+  });
+  </script>
+{% endblock %}
+
+
+
+
+
+      <!--<script>
+      style="visibility: hidden"
         function showForm() {
           document.getElementById("comm_form").style.visibility = "visible";
           document.getElementById("new_comm").style.visibility = "hidden";
         }
 
-      </script>
-      <form action="" method="post" style="visibility: hidden" id="comm_form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <input type="hidden" id="postId" name="postId" value= {{post.title}}>
-          <input type="submit" value="OK">
-      </form>
+        function hideForm() {
+          document.getElementById("new_comm").style.visibility = "visible";
+          document.getElementById("comm_form").style.visibility = "hidden";
+        }
+
+      </script>-->
+
   {% endfor %}
 </ul>
 
