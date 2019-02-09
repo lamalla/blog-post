@@ -27,13 +27,57 @@
         <!--  <p><label for="id_author">Author:</label> <input type="text" name="author" maxlength="200" required="" id="id_author"></p>
           <p><label for="id_text">Text:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text"></textarea></p>
           <input type="hidden" id="postId" name="postId" value= {{post.id}}>-->
-          <input type="submit" value="OK" id= "sub">
+          <input class="sub" type="submit" value="OK" >
           <button type="button" onclick="hideForm()">X</button>
       </form>
 
+      <div id= "results"></div>
 
 
-      {% block javascript %}
+
+    {% block javascript %}
+    <script>
+    $('.sub').on('click', function(event){
+      event.preventDefault();
+      console.log("form submitted!")  // sanity check
+      var post_Id= $(this).closest("form").attr('id')
+      var author = $("#id_author").val();
+      var text = $("#id_text").val();
+      console.log(post_Id)
+      add_comment(post_Id, author, text);
+      });
+
+
+
+    function add_comment(id, author, text) {
+    console.log("create post is working!") // sanity check
+    $.ajax({
+        url : "/blog/", // the endpoint
+        type : "POST", // http method
+        data : { post_Id : id,
+                author : author,
+                text : text,
+                  csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, // data sent with the post request
+
+        // handle a successful response
+        success : function(json) {
+            //$('#post-text').val(''); // remove the value from the input
+            console.log(json); // log the returned json to the console
+            console.log("success"); // another sanity check
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            console.log(err)
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+};
+    </script>
+
+
+
 <!--  <script>
   $("#sub").click(function () {
     var author = $("#id_author").val();

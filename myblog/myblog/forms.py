@@ -3,10 +3,15 @@ from blog.models import *
 
 
 class CommentForm(forms.ModelForm):
-        post_Id = forms.IntegerField()
         class Meta:
             model = Comment
             exclude = ('date', )
+            widgets = {
+            'post_Id': forms.NumberInput(attrs={
+                'required': True,
+                'placeholder': '0'
+            }),
+        }
 
 
         # def __init__(self, *args, **kwargs):

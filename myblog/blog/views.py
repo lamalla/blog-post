@@ -33,7 +33,7 @@ def index(request):
         curr_post.comments.add(comment)
         #print(curr_post.comments)
         curr_post.save()
-        return redirect('/blog/')
+        #return redirect('/blog/')
     else:
         form= CommentForm()
 
