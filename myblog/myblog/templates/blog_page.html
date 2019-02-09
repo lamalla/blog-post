@@ -20,21 +20,26 @@
 
         {% endfor %}
       <button type="button" id= "new_comm" onclick="showForm()">Add Comment</button>
+
       <form action="" method="post" id={{post.id}}>
           {% csrf_token %}
-          {{ form.as_p }}
-          <!--<input type="hidden" id="postId" name="postId" value= {{post.title}}>-->
+          {{form.as_p}}
+        <!--  <p><label for="id_author">Author:</label> <input type="text" name="author" maxlength="200" required="" id="id_author"></p>
+          <p><label for="id_text">Text:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text"></textarea></p>
+          <input type="hidden" id="postId" name="postId" value= {{post.id}}>-->
           <input type="submit" value="OK" id= "sub">
           <button type="button" onclick="hideForm()">X</button>
       </form>
 
 
+
       {% block javascript %}
-  <script>
+<!--  <script>
   $("#sub").click(function () {
-    var author = $("id_author").val();
-    var text = $("id_text").val();
-    var id= $(this).closest('form').attr('id');
+    var author = $("#id_author").val();
+    var text = $("#id_text").val();
+    var post_id= $('#postId').val();
+    console.log(post_id);
 
     $.ajax({
       url: '/blog/',
@@ -42,7 +47,7 @@
       data: {
         'author': author,
         'text': text,
-        'id': id,
+        'post_id': post_id
       },
       dataType: 'json',
       success: function (data) {
@@ -51,7 +56,7 @@
     });
 
   });
-  </script>
+</script>-->
 {% endblock %}
 
 
