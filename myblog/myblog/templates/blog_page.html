@@ -2,108 +2,139 @@
 <html>
 
 <head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Latest compiled and minified CSS -->
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <title>My Blog</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style>
+  div {display:inline-block;}
+  li {list-style-type: none;}
+
+
+
+</style>
 </head>
 
 <body>
   <h1> My Blog</h1>
+
   {% block content %}
-<ul>  {% for post in blog_posts %}
-      <h2>{{ post.title}}</h2> <br/>
-      by {{ post.author}} on {{ post.date }} <br/>
-      {{ post.text }}  <br/>
-        {% for comment in post.comments.all %}
+  <div class="recent col-sm-2">
+    <h3>Recent Posts</h3><br/>
+    {% for post in blog_posts|slice:"5" %}
+    <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
+   {% endfor %}
+  </div>
+
+
+  <div class="col-sm-10">
+    <ul>  {% for post in blog_posts %}
+      <li id="post_{{post.id}}">
+        <h2>{{ post.title}}</h2> <br/>
+          by {{ post.author}} on {{ post.date }} <br/>
+          {{ post.text }}  <br/>
+          {% for comment in post.comments.all %}
           {{comment.text}} <br/>
           -{{comment.author}}<br/>
-          <br/>
-
+              <br/>
         {% endfor %}
-      <button type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
+      <button class= "btn btn-primary" type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
 
       <form action="" style="visibility: hidden; display: none;" id={{post.id}}>
           {% csrf_token %}
-          <!--{{form.as_p}}-->
-         <p><label for="id_author">Author:</label> <input type="text" name="author" maxlength="200" required="" id="id_author_{{post.id}}" ></p>
-          <p><label for="id_text">Text:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text_{{post.id}}"></textarea></p>
-          <!--<input type="hidden" id="postId" name="postId" value= {{post.id}}>-->
-          <input class="sub" type="button" value="OK" >
-          <button type="button" onclick="hideForm({{post.id}})">X</button>
+          <p><label for="id_author">Name:</label> <input type="text" name="author" maxlength="200" required="" id="id_author_{{post.id}}" ></p>
+          <p><label for="id_text">Comment:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text_{{post.id}}"></textarea></p>
+          <button class="sub btn btn-primary" type="button" >Post Comment</button>
+          <!--<button type="button" onclick="hideForm({{post.id}})">X</button>-->
+          <a href=''><i class="material-icons" onclick="hideForm({{post.id}})">close</i></a>
       </form>
 
+    </li>
+  </ul>
+</div>
+</div>
 
+{% block javascript %}
+<script>
 
-    {% block javascript %}
-    <script>
-
-    function showForm(id){
-      $("#new_comm_" + id ).attr('style','visibility: hidden; display: none;');
-      $("#" +id ).attr('style','visibility: visible; display: block;');
-    };
-    function hideForm(id){
-      $("#new_comm_" + id ).attr('style','visibility: visible; display: block;');
-      $("#" + id ).attr('style','visibility: hidden; display: none;');
-
-    };
-
-    $('.sub').on('click', function(event){
-      event.preventDefault();
-      console.log("submitted!")
-      var post_Id= $(this).closest("form").attr('id');
-      var author = $("#id_author_" +  + post_Id).val();
-      var text = $("#id_text_" + post_Id).val();
-      console.log(post_Id)
-      add_comment(post_Id, author, text);
-      event.stopImmediatePropagation();
-      });
-
-
-
-    function add_comment(id, author, text) {
-    console.log("create post is working!")
-    $.ajax({
-        url : "/blog/",
-        type : "POST",
-        data : { post_Id : id,
-                author : author,
-                text : text,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
-        success : function(json) {
-            console.log("success");
-            location.reload()
-        },
-        error : function(xhr,errmsg,err) {
-            console.log(err);
-        }
-    });
+function showForm(id){
+  $("#new_comm_" + id ).attr('style','visibility: hidden; display: none;');
+  $("#" +id ).attr('style','visibility: visible; display: block;');
 };
-    </script>
+function hideForm(id){
+  $("#new_comm_" + id ).attr('style','visibility: visible; display: block;');
+  $("#" + id ).attr('style','visibility: hidden; display: none;');
+
+};
+
+$('.sub').on('click', function(event){
+  event.preventDefault();
+  console.log("submitted!")
+  var post_Id= $(this).closest("form").attr('id');
+  var author = $("#id_author_" +  + post_Id).val();
+  var text = $("#id_text_" + post_Id).val();
+  console.log(post_Id)
+  add_comment(post_Id, author, text);
+  event.stopImmediatePropagation();
+  });
+
+
+
+function add_comment(id, author, text) {
+console.log("create post is working!")
+$.ajax({
+    url : "/blog/",
+    type : "POST",
+    data : { post_Id : id,
+            author : author,
+            text : text,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+    },
+    success : function(json) {
+        console.log("success");
+        location.reload()
+    },
+    error : function(xhr,errmsg,err) {
+        console.log(err);
+    }
+});
+};
+</script>
 
 
 
 <!--  <script>
-  $("#sub").click(function () {
-    var author = $("#id_author").val();
-    var text = $("#id_text").val();
-    var post_id= $('#postId').val();
-    console.log(post_id);
+$("#sub").click(function () {
+var author = $("#id_author").val();
+var text = $("#id_text").val();
+var post_id= $('#postId').val();
+console.log(post_id);
 
-    $.ajax({
-      url: '/blog/',
-      type: "POST",
-      data: {
-        'author': author,
-        'text': text,
-        'post_id': post_id
-      },
-      dataType: 'json',
-      success: function (data) {
-          alert("you rock");
-      }
-    });
+$.ajax({
+  url: '/blog/',
+  type: "POST",
+  data: {
+    'author': author,
+    'text': text,
+    'post_id': post_id
+  },
+  dataType: 'json',
+  success: function (data) {
+      alert("you rock");
+  }
+});
 
-  });
+});
 </script>-->
 {% endblock %}
 
@@ -111,24 +142,26 @@
 
 
 
-      <!--<script>
-      style="visibility: hidden"
-        function showForm() {
-          document.getElementById("comm_form").style.visibility = "visible";
-          document.getElementById("new_comm").style.visibility = "hidden";
-        }
+  <!--<script>
+  style="visibility: hidden"
+    function showForm() {
+      document.getElementById("comm_form").style.visibility = "visible";
+      document.getElementById("new_comm").style.visibility = "hidden";
+    }
 
-        function hideForm() {
-          document.getElementById("new_comm").style.visibility = "visible";
-          document.getElementById("comm_form").style.visibility = "hidden";
-        }
+    function hideForm() {
+      document.getElementById("new_comm").style.visibility = "visible";
+      document.getElementById("comm_form").style.visibility = "hidden";
+    }
 
-      </script>-->
+  </script>-->
 
-  {% endfor %}
-</ul>
+{% endfor %}
 
   {% endblock content %}
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 </body>
 
 </html>
