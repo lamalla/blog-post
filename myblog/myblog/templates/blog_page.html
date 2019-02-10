@@ -22,6 +22,9 @@
   .close_form {float: right; padding: 3px;}
   .span{display: inline;}
   .add_comm {display: block;}
+  .nav-item{float: left;}
+  .recent{float:right; margin-right:5%;}
+  .posts{margin-left: 5%;}
 
 
 
@@ -36,25 +39,19 @@
   </div>
 </div>
 
-
-  <div class="recent col-sm-2 hidden-xs">
-    <h3>Recent Posts</h3><br/>
-    <nav class="nav flex-column">
-       {% for post in blog_posts|slice:"5" %}
-       <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
-      {% endfor %}
-    </nav>
-  </div>
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand nav-item nav-link mr-auto" href="#">Home</a>
+</nav>
 
 
-  <div class="col-sm-8 posts">
+  <div class="col-sm-8 posts border ">
     <ul>
       <li >
         {% for post in blog_posts %}
         <h2 id="post_{{post.id}}">{{ post.title}}</h2> <br/>
-          by {{ post.author}} on {{ post.date }} <br/>
-          {{post.comments.all|length}} comment <br/>
-          {{ post.text }}  <br/>
+          <small class="text-muted"> by {{ post.author}} on {{ post.date }} </small><br/>
+          <small class="text-muted"> {{post.comments.all|length}} comment</small> <br/>
+          <p>{{ post.text }} </p> <br/>
           <div class=" m-3">
             {% for comment in post.comments.all %}
             <span><i class="material-icons account_icon">account_circle</i></span>
@@ -81,8 +78,19 @@
       </form>
       {% endfor %}
     </li>
+    <div class="dropdown-divider"></div>
   </ul>
 </div>
+
+
+  <div class="recent col-sm-2 hidden-xs border">
+    <h3>Recent Posts</h3><br/>
+    <nav class="nav flex-column">
+       {% for post in blog_posts|slice:"5" %}
+       <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
+      {% endfor %}
+    </nav>
+  </div>
 
 <div class= "col-sm-1">
   {% block content %}
