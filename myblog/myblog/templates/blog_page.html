@@ -3,7 +3,7 @@
 
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- Latest compiled and minified CSS -->
 
@@ -19,6 +19,7 @@
   <style>
   div {display:inline-block;}
   li {list-style-type: none;}
+  .recent {position: sticky; z-index: 100; align-self: flex-start; }
 
 
 
@@ -33,7 +34,7 @@
 </div>
 
   {% block content %}
-  <div class="recent col-sm-2 hidden-xs">
+  <div class="recent col-sm-2 hidden-xs sticky-top">
     <h3>Recent Posts</h3><br/>
     {% for post in blog_posts|slice:"5" %}
     <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
@@ -43,9 +44,9 @@
 
   <div class="col-sm-10">
     <ul>
-      <li id="post_{{post.id}}">
+      <li >
         {% for post in blog_posts %}
-        <h2>{{ post.title}}</h2> <br/>
+        <h2 id="post_{{post.id}}">{{ post.title}}</h2> <br/>
           by {{ post.author}} on {{ post.date }} <br/>
           {{ post.text }}  <br/>
           <div class="card">
@@ -60,11 +61,14 @@
       <form action="" style="visibility: hidden; display: none;" id={{post.id}}>
         <div class="form-group">
           {% csrf_token %}
-          <p><label for="id_author">Name:</label> <input type="text" name="author" maxlength="200" required="" id="id_author_{{post.id}}" ></p>
-          <p><label for="id_text">Comment:</label> <textarea name="text" cols="40" rows="10" required="" id="id_text_{{post.id}}"></textarea></p>
+          <p><label for="id_author">Name:</label> <input class= form-control type="text" name="author" maxlength="200" required="" id="id_author_{{post.id}}" /></p>
+          <p><label for="id_text">Comment:</label> <textarea class= form-control name="text" cols="40" rows="10" required="" id="id_text_{{post.id}}"></textarea></p>
+          <div style= "visibility: hidden; display: none;" class="alert alert-danger" id="form_alert_{{post.id}}" role="alert">
+          </div>
           <button class="sub btn btn-primary" type="button" >Post Comment</button>
           <!--<button type="button" onclick="hideForm({{post.id}})">X</button>-->
           <a href=''><i class="material-icons" onclick="hideForm({{post.id}})">close</i></a>
+
         </div>
       </form>
       {% endfor %}
@@ -83,7 +87,6 @@ function showForm(id){
 function hideForm(id){
   $("#new_comm_" + id ).attr('style','visibility: visible; display: block;');
   $("#" + id ).attr('style','visibility: hidden; display: none;');
-
 };
 
 $('.sub').on('click', function(event){
@@ -92,8 +95,14 @@ $('.sub').on('click', function(event){
   var post_Id= $(this).closest("form").attr('id');
   var author = $("#id_author_" +  + post_Id).val();
   var text = $("#id_text_" + post_Id).val();
-  console.log(post_Id)
-  add_comment(post_Id, author, text);
+  console.log(post_Id);
+  if(author == '' || text == ''){
+    $("#form_alert_" +  + post_Id).attr('style','visibility: visible; display: block;');
+    $("#form_alert_" +  + post_Id).text("Please fill out all fields!");
+  }
+  else{
+    add_comment(post_Id, author, text);
+  }
   event.stopImmediatePropagation();
   });
 
@@ -167,7 +176,7 @@ $.ajax({
 
 
   {% endblock content %}
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 </body>
