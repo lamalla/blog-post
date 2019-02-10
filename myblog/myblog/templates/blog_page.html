@@ -20,8 +20,10 @@
   div {display:inline-block;}
   li {list-style-type: none;}
   .close_form {float: right; padding: 3px;}
-  .span{display: inline;}
+  .ic{display: inline-block; vertical-align: middle;}
+  .comm_detail{display: inline-block;}
   .add_comm {display: block;}
+  .comm{display: block;, margin:5%;}
   .nav-item{float: left;}
   .recent{float:right; margin-right:5%;}
   .posts{margin-left: 5%;}
@@ -52,12 +54,14 @@
           <small class="text-muted"> by {{ post.author}} on {{ post.date }} </small><br/>
           <small class="text-muted"> {{post.comments.all|length}} comment</small> <br/>
           <p>{{ post.text }} </p> <br/>
-          <div class=" m-3">
+          <div class="m-3">
             {% for comment in post.comments.all %}
-            <span><i class="material-icons account_icon">account_circle</i></span>
-            <span>{{comment.author}}<br/>
+            <div class= "comm">
+            <span class="ic"><i class="material-icons account_icon">account_circle</i></span>
+            <span class="comm_detail"><b>{{comment.author}}</b><br/>
             {{comment.text}} <br/>
-            {{comment.date}} <br/></span>
+            <small class="text-muted">{{comment.date}}</small> <br/></span>
+          </div>
             {% endfor %}
           </div>
 
