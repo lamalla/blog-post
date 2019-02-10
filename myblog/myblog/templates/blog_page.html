@@ -20,6 +20,8 @@
   div {display:inline-block;}
   li {list-style-type: none;}
   .close_form {float: right; padding: 3px;}
+  .span{display: inline;}
+  .add_comm {display: block;}
 
 
 
@@ -35,29 +37,33 @@
 </div>
 
 
-  <div class="recent col-sm-2 hidden-xs sticky-top">
+  <div class="recent col-sm-2 hidden-xs">
     <h3>Recent Posts</h3><br/>
-    {% for post in blog_posts|slice:"5" %}
-    <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
-   {% endfor %}
+    <nav class="nav flex-column">
+       {% for post in blog_posts|slice:"5" %}
+       <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
+      {% endfor %}
+    </nav>
   </div>
 
 
-  <div class="col-sm-8">
+  <div class="col-sm-8 posts">
     <ul>
       <li >
         {% for post in blog_posts %}
         <h2 id="post_{{post.id}}">{{ post.title}}</h2> <br/>
           by {{ post.author}} on {{ post.date }} <br/>
           {{ post.text }}  <br/>
-          <div class="card m-3">
+          <div class=" m-3">
             {% for comment in post.comments.all %}
+            <span><i class="material-icons account_icon">account_circle</i></span>
+            <span>{{comment.author}}<br/>
             {{comment.text}} <br/>
-            -{{comment.author}}<br/>
+            {{comment.date}} <br/></span>
             {% endfor %}
           </div>
 
-      <button class= "btn btn-primary m-3 " type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
+      <button class= "btn btn-primary m-3 add_comm " type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
 
       <form action="" style="visibility: hidden; display: none;" id={{post.id}}>
         <div class="form-group">
