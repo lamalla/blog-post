@@ -33,7 +33,7 @@
 </div>
 
   {% block content %}
-  <div class="recent col-sm-2">
+  <div class="recent col-sm-2 hidden-xs">
     <h3>Recent Posts</h3><br/>
     {% for post in blog_posts|slice:"5" %}
     <a href='#post_{{post.id}}'>{{ post.title }}</a><br/>
@@ -47,11 +47,12 @@
         <h2>{{ post.title}}</h2> <br/>
           by {{ post.author}} on {{ post.date }} <br/>
           {{ post.text }}  <br/>
-          {% for comment in post.comments.all %}
-          {{comment.text}} <br/>
-          -{{comment.author}}<br/>
-              <br/>
-        {% endfor %}
+          <div class="card">
+            {% for comment in post.comments.all %}
+            {{comment.text}} <br/>
+            -{{comment.author}}<br/>
+            {% endfor %}
+        </div>
       <button class= "btn btn-primary" type="button" id= "new_comm_{{post.id}}" onclick="showForm({{post.id}})">Add Comment</button>
 
       <form action="" style="visibility: hidden; display: none;" id={{post.id}}>
