@@ -3,6 +3,7 @@
 
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-latest.js"></script>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <!-- Latest compiled and minified CSS -->
@@ -16,11 +17,12 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <title>My Blog</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
   <style>
   div {display:inline-block;}
   li {list-style-type: none;}
   .close_form {float: right; padding: 3px;}
-  .ic{display: inline-block; vertical-align: middle;}
+  .ic{display: inline-block; vertical-align: top;}
   .comm_detail{display: inline-block;}
   .add_comm {display: block;}
   .comm{display: block;, margin:5%;}
@@ -30,8 +32,8 @@
 
 
 
+  </style>
 
-</style>
 </head>
 
 <body>
@@ -46,7 +48,7 @@
 </nav>
 
 
-  <div class="col-sm-8 posts border ">
+  <div class="col-xs-12 col-sm-8 posts border ">
     <ul>
       <li >
         {% for post in blog_posts %}
@@ -54,14 +56,14 @@
           <small class="text-muted"> by {{ post.author}} on {{ post.date }} </small><br/>
           <small class="text-muted"> {{post.comments.all|length}} comment</small> <br/>
           <p>{{ post.text }} </p> <br/>
-          <div class="m-3">
+          <div class="m-3" id= "comments_{{post.id}}">
             {% for comment in post.comments.all %}
             <div class= "comm">
-            <span class="ic"><i class="material-icons account_icon">account_circle</i></span>
-            <span class="comm_detail"><b>{{comment.author}}</b><br/>
-            {{comment.text}} <br/>
-            <small class="text-muted">{{comment.date}}</small> <br/></span>
-          </div>
+              <span class="ic"><i class="material-icons account_icon">account_circle</i></span>
+              <span class="comm_detail"><b>{{comment.author}}</b><br/>
+                {{comment.text}} <br/>
+              <small class="text-muted">{{comment.date}}</small> <br/></span>
+            </div>
             {% endfor %}
           </div>
 
@@ -142,8 +144,35 @@ $.ajax({
             csrfmiddlewaretoken: '{{ csrf_token }}'
     },
     success : function(json) {
+       //  var new_div = document.createElement('div');
+       // new_div.innerHTML = `<div class= "comm">
+       //  <span class="ic"><i class="material-icons account_icon">account_circle</i></span> +
+       // <span class="comm_detail"><b> data.author</b><br/>
+       //  data.text <br/>
+       //  <!--<small class="text-muted">{{comment.date}}</small>--> <br/></span>
+       // </div>`;
+        var today= new Date();
+        var months= ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
+        var hours= today.getHours();
+        var mins= ('0'+today.getMinutes()).slice(-2);
+        var meridiem= "a.m.";
+        if (hours > 12){
+          hours= hours -12;
+          meridiem= "p.m."
+        }
+        var date= (months[today.getMonth()]) + ' ' + (today.getDate()) + ', ' + today.getFullYear() + ', '+ hours +':' + mins + " " + meridiem;
+        hideForm(id);
+        $('#comments_' + id).append(
+          `<div class= "comm">
+           <span class="ic"><i class="material-icons account_icon">account_circle</i></span>
+          <span class="comm_detail"><b>` + author + `</b><br/>` +
+           text + `<br/>
+           <small class="text-muted">`+ date +`</small> <br/></span>
+          </div>`
+        );
+
+        //location.reload()
         console.log("success");
-        location.reload()
     },
     error : function(xhr,errmsg,err) {
         console.log(err);
