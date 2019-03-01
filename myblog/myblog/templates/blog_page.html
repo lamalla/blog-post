@@ -25,10 +25,12 @@
   .ic{display: inline-block; vertical-align: top;}
   .comm_detail{display: inline-block;}
   .add_comm {display: block;}
-  .comm{display: block;, margin:5%;}
+  .comm{display: block; margin:5%;}
   .nav-item{float: left;}
   .recent{float:right; margin-right:5%;}
   .posts{margin-left: 5%;}
+  .text{margin-top: 10px}
+  span{display: inline;}
 
 
 
@@ -52,11 +54,11 @@
     <ul>
       <li >
         {% for post in blog_posts %}
-        <h2 id="post_{{post.id}}">{{ post.title}}</h2> <br/>
-          <small class="text-muted"> by {{ post.author}} on {{ post.date }} </small><br/>
-          <small class="text-muted"> {{post.comments.all|length}} comment</small> <br/>
-          <p>{{ post.text }} </p> <br/>
+        <h2 id="post_{{post.id}}">{{ post.title}}</h2>
+          <small class="text-muted"> By {{ post.author}} on {{ post.date }} </small>
+          <p class="text">{{ post.text }} </p>
           <div class="m-3" id= "comments_{{post.id}}">
+            <h4>Comments:</h4>
             {% for comment in post.comments.all %}
             <div class= "comm">
               <span class="ic"><i class="material-icons account_icon">account_circle</i></span>
@@ -144,13 +146,6 @@ $.ajax({
             csrfmiddlewaretoken: '{{ csrf_token }}'
     },
     success : function(json) {
-       //  var new_div = document.createElement('div');
-       // new_div.innerHTML = `<div class= "comm">
-       //  <span class="ic"><i class="material-icons account_icon">account_circle</i></span> +
-       // <span class="comm_detail"><b> data.author</b><br/>
-       //  data.text <br/>
-       //  <!--<small class="text-muted">{{comment.date}}</small>--> <br/></span>
-       // </div>`;
         var today= new Date();
         var months= ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
         var hours= today.getHours();
@@ -170,8 +165,6 @@ $.ajax({
            <small class="text-muted">`+ date +`</small> <br/></span>
           </div>`
         );
-
-        //location.reload()
         console.log("success");
     },
     error : function(xhr,errmsg,err) {
